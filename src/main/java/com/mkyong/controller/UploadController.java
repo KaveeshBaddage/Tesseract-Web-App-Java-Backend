@@ -19,12 +19,12 @@ import java.nio.file.Paths;
 public class UploadController {
 
     //Save the uploaded file to this folder
-    private static String UPLOADED_FOLDER = "D:\\temp\\";
+    private static String UPLOADED_FOLDER = "/home/tesseract/upload/";
 
-    @GetMapping("/")
-    public String index() {
-        return "upload";
-    }
+//    @GetMapping("/")
+//    public String index() {
+//        return "index";
+//    }
 
     @PostMapping("/getEnglishText") // //new annotation since 4.3
     public String singleFileUpload(@RequestParam("file") MultipartFile file,
