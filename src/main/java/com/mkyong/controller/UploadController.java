@@ -19,7 +19,7 @@ import java.nio.file.Paths;
 public class UploadController {
 
     //Save the uploaded file to this folder
-    private static String UPLOADED_FOLDER = "/home/tesseract/upload/";
+    private static String UPLOADED_FOLDER = "D:\\Tessaract w";
 
 //    @GetMapping("/")
 //    public String index() {
