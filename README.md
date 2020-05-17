@@ -30,7 +30,11 @@ You have to put downloaded file in to `/usr/share/tesseract-ocr/4.00/tessdata` d
     tesseract <imagefileLocation> stdout -l sin --tessdata-dir=<tessdataFileLocation>
 
 ### Build the application
-You can get relevent frontend application's code base from [here](https://github.com/KaveeshBaddage/Tesseract-Web-App).  
+You have to checkout to the relevant branch of this repository according to your deployment server environment.
+
+If you are running this application in Linux environment, You have to checkout to the **linux** branch. Or if it is Windows environment, you have to checkout to the **windows** branch. 
+
+You can get relevant frontend application's code base from [here](https://github.com/KaveeshBaddage/Tesseract-Web-App).  
 
 All the instructions to 
  - Build the frontend application  
