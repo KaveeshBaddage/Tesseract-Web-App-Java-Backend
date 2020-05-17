@@ -1,35 +1,28 @@
 package com.mkyong.controller;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-@Controller
+@RestController
 public class UploadController {
 
     //Save the uploaded file to this folder
-    private static String UPLOADED_FOLDER = "D:\\Tessaract w";
-
-//    @GetMapping("/")
-//    public String index() {
-//        return "index";
-//    }
+    private static String UPLOADED_FOLDER = "/tmp/";
 
     @PostMapping("/getEnglishText") // //new annotation since 4.3
+    @ResponseBody
     public String singleFileUpload(@RequestParam("file") MultipartFile file,
                                    RedirectAttributes redirectAttributes) {
-        String resp = "";
+        String extractedText = "";
 
         if (file.isEmpty()) {
             redirectAttributes.addFlashAttribute("message", "Please select a file to upload");
@@ -37,15 +30,15 @@ public class UploadController {
         }
 
         try {
-
-            // Get the file and save it somewhere
+            // Get the file and save it temporarily
             byte[] bytes = file.getBytes();
             Path path = Paths.get(UPLOADED_FOLDER + file.getOriginalFilename());
-            System.out.println("File name is"+ file.getOriginalFilename() );
+            System.out.println("File name is" + file.getOriginalFilename());
             Files.write(path, bytes);
 
+            //Run Tessseract Command to extract the text
             ProcessBuilder builder = new ProcessBuilder(
-                    "cmd.exe", "/c", "cd \"D:\\temp\"  && tesseract "+file.getOriginalFilename()+" stdout -l eng");
+                    "/bin/sh", "-c", " tesseract " + UPLOADED_FOLDER + file.getOriginalFilename() + " stdout -l eng");
             builder.redirectErrorStream(true);
             Process p = builder.start();
             BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
@@ -55,28 +48,27 @@ public class UploadController {
                 if (line == null) {
                     break;
                 }
-                resp = resp + line ;
+                extractedText = extractedText + System.lineSeparator() + line;
                 System.out.println(line);
 
-                //resp = "Responce is " + line;
-
             }
-
-
-            redirectAttributes.addFlashAttribute("message",
-                    "'" + resp + "'");
+            //Delete temporarily created file
+            File ToDelete = new File(String.valueOf(path));
+            ToDelete.delete();
+/*            redirectAttributes.addFlashAttribute("message",
+                    "'" + extractedText + "'");*/
 
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return extractedText;
 
-        return "redirect:/uploadStatus";
     }
 
     @PostMapping("/getSinhalaText") // //new annotation since 4.3
     @ResponseBody
     public String singleFileUploadTwo(@RequestParam("file") MultipartFile file) {
-        String resp = "";
+        String extractedText = "";
 
         if (file.isEmpty()) {
             //redirectAttributes.addFlashAttribute("message", "Please select a file to upload");
@@ -88,11 +80,12 @@ public class UploadController {
             // Get the file and save it somewhere
             byte[] bytes = file.getBytes();
             Path path = Paths.get(UPLOADED_FOLDER + file.getOriginalFilename());
-            System.out.println("File name is"+ file.getOriginalFilename() );
+            System.out.println("File name is" + file.getOriginalFilename());
             Files.write(path, bytes);
 
+            //Run Tessseract Command to extract the text
             ProcessBuilder builder = new ProcessBuilder(
-                    "cmd.exe", "/c", "cd \"D:\\temp\"  && tesseract "+file.getOriginalFilename()+" stdout -l sin");
+                    "/bin/sh", "-c", " tesseract " + UPLOADED_FOLDER + file.getOriginalFilename() + " stdout -l sin");
             builder.redirectErrorStream(true);
             Process p = builder.start();
             BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
@@ -102,24 +95,19 @@ public class UploadController {
                 if (line == null) {
                     break;
                 }
-                resp = resp + System.lineSeparator() + line ;
+                extractedText = extractedText + System.lineSeparator() + line;
                 System.out.println(line);
-
-                //resp = "Responce is " + line;
-
             }
 
-
-
-
-
-            //redirectAttributes.addFlashAttribute("message","'" + resp + "'");
+            //redirectAttributes.addFlashAttribute("message","'" + extractedText + "'");
+            //Delete temporarily created file
+            File ToDelete = new File(String.valueOf(path));
+            ToDelete.delete();
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        return resp;
+        return extractedText;
     }
 
     @GetMapping("/uploadStatus")
