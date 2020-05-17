@@ -1,0 +1,9 @@
+*.idea/*
+
+# Package Files #
+*.jar
+
+*.meta
+/.metadata/
+/.tmp
+*/.tmp
